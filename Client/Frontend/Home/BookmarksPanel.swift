@@ -269,7 +269,13 @@ class BookmarksPanel: SiteTableViewController, HomePanel {
         switchTableEditingMode(true)
     }
 
-    
+    func checkDisableEdit() {
+        if self.currentFolder != nil {
+            let bookMarkCount = self.frc?.fetchedObjects?.count ?? 0
+            editBookmarksButton.isEnabled = bookMarkCount > 0
+        }
+    }
+
     func switchTableEditingMode(_ forceOff:Bool = false) {
         let editMode:Bool = forceOff ? false : !tableView.isEditing
         tableView.setEditing(editMode, animated: forceOff ? false : true)
@@ -281,6 +287,9 @@ class BookmarksPanel: SiteTableViewController, HomePanel {
     }
     
     func updateEditBookmarksButton(_ tableIsEditing:Bool) {
+        if tableIsEditing == false {
+            checkDisableEdit()
+        }
         self.editBookmarksButton.title = tableIsEditing ? Strings.Done : Strings.Edit
         self.editBookmarksButton.style = tableIsEditing ? .done : .plain
     }
@@ -317,6 +326,8 @@ class BookmarksPanel: SiteTableViewController, HomePanel {
         
         // This removes the small top border from the toolbar
         editBookmarksToolbar.clipsToBounds = true
+
+        checkDisableEdit()
     }
     
     func onDeleteBookmarksFolderButton() {
@@ -495,6 +506,8 @@ class BookmarksPanel: SiteTableViewController, HomePanel {
                 twoLineCell.setRightBadge(nil)
             }
         }
+
+        checkDisableEdit()
     }
     
     fileprivate func downloadFaviconsAndUpdateForUrl(_ url: URL, indexPath: IndexPath) {
